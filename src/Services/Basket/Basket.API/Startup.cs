@@ -1,4 +1,5 @@
 using Basket.API.Repositories;
+using Discount.Grpc.Protos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Basket.API.GrpcServices;
 namespace Basket.API
 {
     public class Startup
@@ -36,8 +37,11 @@ namespace Basket.API
 
             services.AddControllers();
 
-           
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
+                   o => o.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
 
+            services.AddScoped<DiscountGrpcService>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" });
